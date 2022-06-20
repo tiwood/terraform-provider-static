@@ -55,8 +55,10 @@ The **data** map will be copied to the **output** attribute during resource crea
 
 func resourceDataCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
-	data := d.Get("data")
-	d.Set("output", data)
+	data := d.Get("data").(map[string]interface{})
+	if err := FlattenAndSet(d, Expand(data), "output"); err != nil {
+		return diag.FromErr(err)
+	}
 	d.SetId(fmt.Sprintf("%d", rand.Int()))
 
 	return nil
