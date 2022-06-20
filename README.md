@@ -1,19 +1,28 @@
-# Terraform Provider Scaffolding (Terraform Plugin SDK)
+# Terraform Provider for static data assignments (`static`)
 
-_This template repository is built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk). The template repository built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework) can be found at [terraform-provider-scaffolding-framework](https://github.com/hashicorp/terraform-provider-scaffolding-framework). See [Which SDK Should I Use?](https://www.terraform.io/docs/plugin/which-sdk.html) in the Terraform documentation for additional information._
+This provider allows you to create static data assignments, which will be the same
+during the lifetime of the assignment resource.
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+Here is a simple example to keep a static entry of the time when a resource was
+created:
 
- - A resource, and a data source (`internal/provider/`),
- - Examples (`examples/`) and generated documentation (`docs/`),
- - Miscellaneous meta files.
- 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Learn](https://learn.hashicorp.com/collections/terraform/providers) platform.
+```terraform
+resource "static_data" "creation_metadata" {
+  data = {
+    creation_date = timestamp()
+  }
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+  // optionally you can set the lifecycle.ignore_changes attribute to
+  // prevent unnecessary resource changes
+  lifecycle {
+    ignore_changes = [data]
+  }
+}
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://www.terraform.io/docs/registry/providers/publishing.html) so that others can use it.
-
+output "creation_date" {
+  value = static_data.creation_metadata.output.creation_date
+}
+```
 
 ## Requirements
 

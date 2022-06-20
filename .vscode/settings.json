@@ -1,0 +1,6 @@
+{
+  "[go]": {
+    "files.trimTrailingWhitespace": false
+  },
+  "go.testTimeout": "3m"
+}
